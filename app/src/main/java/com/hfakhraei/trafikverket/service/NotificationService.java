@@ -24,7 +24,7 @@ public class NotificationService {
         try {
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(context, "my_channel_01")
-                            .setSmallIcon(R.drawable.ic_stat_name)
+                            .setSmallIcon(R.drawable.trafikverket_launcher_round)
                             .setContentTitle(BuildConfig.LOG_TAG)
                             .setContentText(message);
             mBuilder.setDefaults(Notification.DEFAULT_SOUND);

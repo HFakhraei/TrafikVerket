@@ -36,6 +36,17 @@ public class RetrieveAvailableOccasionIntentService extends IntentService {
     }
 
     @Override
+    public int onStartCommand(@Nullable Intent intent, int flags, int startId) {
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        stopSelf();
+        super.onDestroy();
+    }
+
+    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         assert intent != null;
         PendingIntent reply = intent.getParcelableExtra(PENDING_RESULT_EXTRA);
