@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Trafik Verket</string>
+    <string name="activity_main_execute">Execute</string>
+    <string name="activity_main_status_running">Running</string>
+</resources>
