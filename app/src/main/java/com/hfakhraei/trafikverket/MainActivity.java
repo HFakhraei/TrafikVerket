@@ -1,11 +1,8 @@
 package com.hfakhraei.trafikverket;
 
-import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -16,17 +13,17 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
-import com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionIntentService;
+import com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.hfakhraei.trafikverket.service.NotificationService.showNotification;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionIntentService.FAILED_CODE;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionIntentService.PENDING_RESULT_EXTRA;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionIntentService.REQUEST_EXTRA;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionIntentService.RESPONSE_RESULT_EXTRA;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionIntentService.SUCCESSFUL_CODE;
+import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.FAILED_CODE;
+import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.PENDING_RESULT_EXTRA;
+import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.REQUEST_EXTRA;
+import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.RESPONSE_RESULT_EXTRA;
+import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.SUCCESSFUL_CODE;
 
 public class MainActivity extends AppCompatActivity {
     private static final int SERVICE_REQUEST_CODE = 0;
@@ -108,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void retrieveAvailableOccasion(int locationId) {
+        String message = String.format("Start foreground service for id %d", locationId);
+        Log.i(BuildConfig.LOG_TAG, message);
         PendingIntent pendingResult = createPendingResult(
                 SERVICE_REQUEST_CODE, new Intent(), 0);
-        Intent intent = new Intent(getApplicationContext(), RetrieveAvailableOccasionIntentService.class);
+        Intent intent = new Intent(getApplicationContext(), RetrieveAvailableOccasionService.class);
         intent.putExtra(REQUEST_EXTRA, locationId);
         intent.putExtra(PENDING_RESULT_EXTRA, pendingResult);
         startService(intent);

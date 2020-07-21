@@ -34,7 +34,7 @@ public class OccasionApiService {
         return callApi(getRequest(locationId));
     }
 
-    private synchronized OccasionResponse callApi(OccasionRequest request) throws IOException {
+    private OccasionResponse callApi(OccasionRequest request) throws IOException {
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.level(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder()
