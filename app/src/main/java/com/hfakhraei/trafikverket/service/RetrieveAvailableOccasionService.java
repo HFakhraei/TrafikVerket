@@ -9,7 +9,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 
 import com.hfakhraei.trafikverket.BuildConfig;
-import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
+import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -22,7 +22,6 @@ import java.util.Map;
 import static com.hfakhraei.trafikverket.service.NotificationService.showNotification;
 
 public class RetrieveAvailableOccasionService extends IntentService {
-    public static LocalDateTime lastUpdate = LocalDateTime.now();
     public static final Map<Integer, OccasionResponse> MAP = new LinkedHashMap<>();
     public static final String REQUEST_EXTRA = "request_extra";
     public static final String RESPONSE_RESULT_EXTRA = "response_extra";
@@ -32,10 +31,6 @@ public class RetrieveAvailableOccasionService extends IntentService {
 
     public RetrieveAvailableOccasionService() {
         super("RAC_IntentService_" + System.currentTimeMillis());
-    }
-
-    public static LocalDateTime getLastUpdate() {
-        return lastUpdate;
     }
 
     public static List<OccasionResponse> getLatest() {
@@ -76,7 +71,6 @@ public class RetrieveAvailableOccasionService extends IntentService {
                 if (reply != null)
                     reply.send(FAILED_CODE);
             }
-            lastUpdate = LocalDateTime.now();
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }

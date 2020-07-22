@@ -1,12 +1,11 @@
 package com.hfakhraei.trafikverket.service;
 
 import com.hfakhraei.trafikverket.BuildConfig;
-import com.hfakhraei.trafikverket.R;
 import com.hfakhraei.trafikverket.TrafikVerketApiService;
-import com.hfakhraei.trafikverket.dto.request.BookingSession;
-import com.hfakhraei.trafikverket.dto.request.OccasionBundleQuery;
-import com.hfakhraei.trafikverket.dto.request.OccasionRequest;
-import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
+import com.hfakhraei.trafikverket.dto.occasionSearch.request.BookingSession;
+import com.hfakhraei.trafikverket.dto.occasionSearch.request.OccasionBundleQuery;
+import com.hfakhraei.trafikverket.dto.occasionSearch.request.OccasionRequest;
+import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
 
 import java.io.IOException;
 import java.time.LocalDateTime;

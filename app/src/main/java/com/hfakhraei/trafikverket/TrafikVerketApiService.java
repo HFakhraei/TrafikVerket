@@ -1,7 +1,7 @@
 package com.hfakhraei.trafikverket;
 
-import com.hfakhraei.trafikverket.dto.request.OccasionRequest;
-import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
+import com.hfakhraei.trafikverket.dto.occasionSearch.request.OccasionRequest;
+import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

@@ -14,7 +14,7 @@ import androidx.annotation.Nullable;
 import com.hfakhraei.trafikverket.BuildConfig;
 
 public class AlarmPlayerService extends Service {
-    private Ringtone r;
+    private static Ringtone r;
 
     @Nullable
     @Override
@@ -26,7 +26,8 @@ public class AlarmPlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM);
-        r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+        if (r == null)
+            r = RingtoneManager.getRingtone(getApplicationContext(), notification);
     }
 
     @Override
@@ -37,11 +38,11 @@ public class AlarmPlayerService extends Service {
 
         r.play();
         Log.i(BuildConfig.LOG_TAG, "Start Alarm Player");
-        (new Handler()).postDelayed(this::stopAlarm, 15000);
+        (new Handler()).postDelayed(AlarmPlayerService::stopAlarm, 30000);
         return super.onStartCommand(intent, flags, startId);
     }
 
-    private void stopAlarm() {
+    public static void stopAlarm() {
         if (r != null && r.isPlaying())
             r.stop();
         Log.i(BuildConfig.LOG_TAG, "Stop Alarm Player");

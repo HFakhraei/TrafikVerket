@@ -1,4 +1,4 @@
-package com.hfakhraei.trafikverket.dto.request;
+package com.hfakhraei.trafikverket.dto.occasionSearch.request;
 
 import java.util.List;
 

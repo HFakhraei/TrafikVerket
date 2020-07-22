@@ -8,14 +8,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
+import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class CustomAdapter extends BaseAdapter {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd HH:mm");
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
     private List<OccasionResponse> occasionResponses;
     private Context context;
 

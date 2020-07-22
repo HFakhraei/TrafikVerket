@@ -12,11 +12,10 @@ import java.time.LocalDateTime;
 import static androidx.core.content.ContextCompat.startForegroundService;
 import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.REQUEST_EXTRA;
 
-
 public class M05SchedulerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        String message = String.format("Start background tasks at %s", LocalDateTime.now().toString());
+        String message = String.format("Start M05 background tasks at %s", LocalDateTime.now().toString());
         Log.i(BuildConfig.LOG_TAG, message);
         retrieveAvailableOccasion(context);
         retrieveAvailableOccasion(context, 1000140);//Stockholm
@@ -29,7 +28,7 @@ public class M05SchedulerReceiver extends BroadcastReceiver {
     }
 
     private void retrieveAvailableOccasion(Context context, int locationId) {
-        String message = String.format("Start background service for id %d", locationId);
+        String message = String.format("Start M05 background service for id %d", locationId);
         Log.i(BuildConfig.LOG_TAG, message);
         Intent intent = new Intent(context, RetrieveAvailableOccasionService.class);
         intent.putExtra(REQUEST_EXTRA, locationId);

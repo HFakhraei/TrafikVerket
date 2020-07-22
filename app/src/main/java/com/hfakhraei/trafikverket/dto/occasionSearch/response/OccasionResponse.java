@@ -1,5 +1,5 @@
 
-package com.hfakhraei.trafikverket.dto.response;
+package com.hfakhraei.trafikverket.dto.occasionSearch.response;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

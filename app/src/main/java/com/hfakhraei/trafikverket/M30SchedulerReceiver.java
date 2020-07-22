@@ -3,7 +3,6 @@ package com.hfakhraei.trafikverket;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.util.Log;
 
 import com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService;
@@ -17,7 +16,7 @@ import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionServic
 public class M30SchedulerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        String message = String.format("Start background tasks at %s", LocalDateTime.now().toString());
+        String message = String.format("Start M30 background tasks at %s", LocalDateTime.now().toString());
         Log.i(BuildConfig.LOG_TAG, message);
         retrieveAvailableOccasion(context);
         retrieveAvailableOccasion(context, 1000071);//Uppsala
@@ -29,7 +28,7 @@ public class M30SchedulerReceiver extends BroadcastReceiver {
         retrieveAvailableOccasion(context, 1000009);//Linköping
         retrieveAvailableOccasion(context, 1000011);//Motala
         retrieveAvailableOccasion(context, 1000001);//Örebro
-        message = String.format("Stop background tasks at %s", LocalDateTime.now().toString());
+        message = String.format("Stop M30 background tasks at %s", LocalDateTime.now().toString());
         Log.i(BuildConfig.LOG_TAG, message);
     }
 
