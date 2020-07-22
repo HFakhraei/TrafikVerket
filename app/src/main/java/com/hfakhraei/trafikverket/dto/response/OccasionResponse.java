@@ -2,6 +2,7 @@
 package com.hfakhraei.trafikverket.dto.response;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 
@@ -13,4 +14,5 @@ public class OccasionResponse implements Serializable {
     private long status;
     private String url;
 
+    private LocalDateTime fetchTime = LocalDateTime.now();
 }

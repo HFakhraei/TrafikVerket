@@ -2,6 +2,7 @@
 package com.hfakhraei.trafikverket.dto.response;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 import lombok.Data;
 

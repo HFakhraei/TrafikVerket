@@ -40,17 +40,20 @@ public class TrafikVerketApplication extends Application {
             return;
         }
 
-        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(this, SchedulerReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-        assert am != null;
-        am.setRepeating(AlarmManager.RTC_WAKEUP,
-                System.currentTimeMillis() + BuildConfig.SCHEDULER_INTERVAL_MILLIS,
-                BuildConfig.SCHEDULER_INTERVAL_MILLIS,
-                pi);
+        configScheduler(BuildConfig.SCHEDULER_INTERVAL_30, M30SchedulerReceiver.class);
+        configScheduler(BuildConfig.SCHEDULER_INTERVAL_10, M10SchedulerReceiver.class);
+        configScheduler(BuildConfig.SCHEDULER_INTERVAL_05, M05SchedulerReceiver.class);
         //Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show();
         showNotification(getApplicationContext(), "Alarm Manager Configured " + BuildConfig.APP_MODE);
         Log.i(BuildConfig.LOG_TAG, "Alarm Manager Configured " + BuildConfig.APP_MODE);
+    }
+
+    private void configScheduler(long millis, Class type) {
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, type);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+        assert am != null;
+        am.setRepeating(AlarmManager.RTC_WAKEUP,System.currentTimeMillis() + millis, millis, pi);
     }
 
 }

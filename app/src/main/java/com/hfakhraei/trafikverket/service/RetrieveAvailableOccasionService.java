@@ -14,10 +14,16 @@ import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.hfakhraei.trafikverket.service.NotificationService.showNotification;
 
 public class RetrieveAvailableOccasionService extends IntentService {
+    public static LocalDateTime lastUpdate = LocalDateTime.now();
+    public static final Map<Integer, OccasionResponse> MAP = new LinkedHashMap<>();
     public static final String REQUEST_EXTRA = "request_extra";
     public static final String RESPONSE_RESULT_EXTRA = "response_extra";
     public static final String PENDING_RESULT_EXTRA = "pending_result_extra";
@@ -26,6 +32,14 @@ public class RetrieveAvailableOccasionService extends IntentService {
 
     public RetrieveAvailableOccasionService() {
         super("RAC_IntentService_" + System.currentTimeMillis());
+    }
+
+    public static LocalDateTime getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public static List<OccasionResponse> getLatest() {
+        return new ArrayList<>(MAP.values());
     }
 
     @Override
@@ -39,34 +53,30 @@ public class RetrieveAvailableOccasionService extends IntentService {
         PendingIntent reply = intent.getParcelableExtra(PENDING_RESULT_EXTRA);
 
         try {
-           try {
-               Log.i(BuildConfig.LOG_TAG,
-                       String.format("call api start for locationId %d", locationId));
+            try {
+                Log.i(BuildConfig.LOG_TAG,
+                        String.format("call api start for locationId %d", locationId));
+
                 OccasionResponse occasionResponse = OccasionApiService.getInstance().callApi(locationId);
-                Intent result = new Intent();
-                result.putExtra(RESPONSE_RESULT_EXTRA, occasionResponse);
-                if (reply != null) {
-                    reply.send(this, SUCCESSFUL_CODE, result);
-                } else {
-                    checkResponse(this, occasionResponse);
-                }
-               Log.i(BuildConfig.LOG_TAG,
-                       String.format("call api successful for locationId %d", locationId));
+                checkResponse(this, occasionResponse);
+                MAP.put(locationId, occasionResponse);
+
+                if (reply != null)
+                    reply.send(SUCCESSFUL_CODE);
+
+                Log.i(BuildConfig.LOG_TAG,
+                        String.format("call api successful for locationId %d", locationId));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(BuildConfig.LOG_TAG, e.getMessage(), e);
+                Log.i(BuildConfig.LOG_TAG,
+                        String.format("call api failed for locationId %d", locationId));
 
-               String message = String.format("Failed calling API with message %s",e.getMessage());
-               showNotification(this, message);
+                MAP.remove(locationId);
 
-               Log.i(BuildConfig.LOG_TAG,
-                       String.format("call api failed for locationId %d", locationId));
-
-               if (reply != null) {
-                    Intent result = new Intent();
-                    result.putExtra(RESPONSE_RESULT_EXTRA, locationId);
-                    reply.send(this, FAILED_CODE, result);
-                }
+                if (reply != null)
+                    reply.send(FAILED_CODE);
             }
+            lastUpdate = LocalDateTime.now();
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }

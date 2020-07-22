@@ -30,12 +30,16 @@ android {
 
 //        buildConfigField "String", "APP_MODE", '"PRODUCTION"'
 //        buildConfigField "String", "URL_BASE", '"https://fp.trafikverket.se/"'
-//        buildConfigField "Integer", "SCHEDULER_INTERVAL_MILLIS", '30 * 60 * 1000'
+//        buildConfigField "Integer", "SCHEDULER_INTERVAL_30", '30 * 60 * 1000'
+//        buildConfigField "Integer", "SCHEDULER_INTERVAL_10", '10 * 60 * 1000'
+//        buildConfigField "Integer", "SCHEDULER_INTERVAL_05", '5 * 60 * 1000'
 //        buildConfigField "Integer", "NOTIFICATION_MAX_DAYS", '10'
 
         buildConfigField "String", "APP_MODE", '"TEST"'
         buildConfigField "String", "URL_BASE", '"http://10.0.2.2:9999/"'
-        buildConfigField "Integer", "SCHEDULER_INTERVAL_MILLIS", '60 * 1000'
+        buildConfigField "Integer", "SCHEDULER_INTERVAL_30", '3 * 60 * 1000'
+        buildConfigField "Integer", "SCHEDULER_INTERVAL_10", '2 * 60 * 1000'
+        buildConfigField "Integer", "SCHEDULER_INTERVAL_05", '1 * 60 * 1000'
         buildConfigField "Integer", "NOTIFICATION_MAX_DAYS", '1000'
     }
 }

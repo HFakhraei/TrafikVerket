@@ -15,24 +15,24 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hfakhraei.trafikverket.dto.response.OccasionResponse;
 import com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.hfakhraei.trafikverket.service.NotificationService.showNotification;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.FAILED_CODE;
 import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.PENDING_RESULT_EXTRA;
 import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.REQUEST_EXTRA;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.RESPONSE_RESULT_EXTRA;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.SUCCESSFUL_CODE;
 
 public class MainActivity extends AppCompatActivity {
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm");
     private static final int SERVICE_REQUEST_CODE = 0;
     private Button btnExecute;
     private ListView listView;
     private TextView txtCounter;
-    private ArrayAdapter adapter;
+    private TextView txtLastUpdate;
+    private CustomAdapter adapter;
 
-    private List<String> mobileArray = new ArrayList<String>();
+    private List<OccasionResponse> occasionResponses = new ArrayList<>();
     private Integer counter = 0;
 
 
@@ -42,12 +42,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         btnExecute = findViewById(R.id.btnExecute);
         txtCounter = findViewById(R.id.txtCounter);
+        txtLastUpdate = findViewById(R.id.txtLastUpdate);
 
-        adapter = new ArrayAdapter<String>(this,
-                R.layout.activity_listview, mobileArray);
-
+        adapter = new CustomAdapter(occasionResponses, this);
         listView = findViewById(R.id.lstView);
         listView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshListView();
+    }
+
+    private void refreshListView() {
+        occasionResponses.clear();
+        txtLastUpdate.setText(RetrieveAvailableOccasionService.getLastUpdate().format(FORMATTER));
+        List<OccasionResponse> latest = RetrieveAvailableOccasionService.getLatest();
+        occasionResponses.addAll(latest);
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -55,38 +68,16 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == SERVICE_REQUEST_CODE) {
             String s = (--counter).toString();
             txtCounter.setText(s);
-            switch (resultCode) {
-                case SUCCESSFUL_CODE:
-                    processResponse(data);
-                    break;
-                case FAILED_CODE:
-                    processError(data);
-                    break;
-            }
+            refreshListView();
         }
         super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    private void processResponse(Intent data) {
-        OccasionResponse occasionResponse =
-                (OccasionResponse) data.getSerializableExtra(RESPONSE_RESULT_EXTRA);
-        String city = occasionResponse.getData().get(0).getOccasions().get(0).getLocationName();
-        String date = occasionResponse.getData().get(0).getOccasions().get(0).getDuration().getStart();
-        mobileArray.add(String.format("%s -> %s", city, date));
-        adapter.notifyDataSetChanged();
-    }
-
-    private void processError(Intent data) {
-        int locationId = data.getIntExtra(RESPONSE_RESULT_EXTRA, 0);
-        mobileArray.add(String.format("Error: %d", locationId));
-        adapter.notifyDataSetChanged();
     }
 
     public void btnExecuteOnClick(View view) {
         if (view.getId() != R.id.btnExecute) {
             return;
         }
-        mobileArray.clear();
+        occasionResponses.clear();
         txtCounter.setText("0");
         adapter.notifyDataSetChanged();
         retrieveAvailableOccasion(1000140);//Stockholm
