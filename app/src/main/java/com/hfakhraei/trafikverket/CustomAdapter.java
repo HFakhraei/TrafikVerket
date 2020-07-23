@@ -8,19 +8,18 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
+import com.hfakhraei.trafikverket.dto.ExamPlacesConfig;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class CustomAdapter extends BaseAdapter {
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-    private List<OccasionResponse> occasionResponses;
+    private List<ExamPlacesConfig> occasionResponses;
     private Context context;
 
-    public CustomAdapter(List<OccasionResponse> occasionResponses, Context context) {
-        this.occasionResponses = occasionResponses;
+    public CustomAdapter(List<ExamPlacesConfig> examPlacesConfigs, Context context) {
+        this.occasionResponses = examPlacesConfigs;
         this.context = context;
     }
 
@@ -45,18 +44,15 @@ public class CustomAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.activity_listview, parent, false);
         }
-        TextView txtName = (TextView)convertView.findViewById(R.id.txtName);
-        TextView txtDate = (TextView)convertView.findViewById(R.id.txtDate);
-        TextView txtTime = (TextView)convertView.findViewById(R.id.txtTime);
+        TextView txtName = convertView.findViewById(R.id.txtName);
+        TextView txtDate = convertView.findViewById(R.id.txtDate);
+        TextView txtTime = convertView.findViewById(R.id.txtTime);
         try {
-            OccasionResponse occasionResponse = occasionResponses.get(position);
-            String city = occasionResponse.getData().get(0).getOccasions().get(0).getLocationName();
-            LocalDateTime date = LocalDateTime.parse(
-                    occasionResponse.getData().get(0).getOccasions().get(0).getDuration().getStart(),
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX]"));
+            ExamPlacesConfig examPlacesConfig = occasionResponses.get(position);
+            String city = examPlacesConfig.getLocationName();
             txtName.setText(city);
-            txtDate.setText(date.format(FORMATTER));
-            txtTime.setText(occasionResponse.getFetchTime().format(DateTimeFormatter.ofPattern("HH:mm")));
+            txtDate.setText(examPlacesConfig.getFirstAvailableTimeToString());
+            txtTime.setText(examPlacesConfig.getLastCheckTimeToString());
             return convertView;
         } catch (Exception e) {
             Log.e(BuildConfig.LOG_TAG, e.getMessage(), e);

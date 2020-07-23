@@ -8,33 +8,42 @@ import android.util.Log;
 
 import androidx.annotation.Nullable;
 
+import com.hfakhraei.trafikverket.AppConfiguration;
 import com.hfakhraei.trafikverket.BuildConfig;
 import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import static com.hfakhraei.trafikverket.service.NotificationService.showNotification;
 
 public class RetrieveAvailableOccasionService extends IntentService {
-    public static final Map<Integer, OccasionResponse> MAP = new LinkedHashMap<>();
+    private static boolean isServiceForeground = false;
     public static final String REQUEST_EXTRA = "request_extra";
     public static final String RESPONSE_RESULT_EXTRA = "response_extra";
     public static final String PENDING_RESULT_EXTRA = "pending_result_extra";
     public static final int SUCCESSFUL_CODE = 0;
     public static final int FAILED_CODE = 1;
 
-    public RetrieveAvailableOccasionService() {
-        super("RAC_IntentService_" + System.currentTimeMillis());
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        isServiceForeground = true;
     }
 
-    public static List<OccasionResponse> getLatest() {
-        return new ArrayList<>(MAP.values());
+    @Override
+    public void onDestroy() {
+        isServiceForeground = false;
+        super.onDestroy();
+    }
+
+    public static boolean isIsServiceForeground() {
+        return isServiceForeground;
+    }
+
+    public RetrieveAvailableOccasionService() {
+        super("RAC_IntentService_" + System.currentTimeMillis());
     }
 
     @Override
@@ -53,9 +62,10 @@ public class RetrieveAvailableOccasionService extends IntentService {
                         String.format("call api start for locationId %d", locationId));
 
                 OccasionResponse occasionResponse = OccasionApiService.getInstance().callApi(locationId);
-                checkResponse(this, occasionResponse);
-                MAP.put(locationId, occasionResponse);
-
+                if (allowToProcess(occasionResponse)) {
+                    checkResponse(this, occasionResponse);
+                    updateExamPlace(locationId, occasionResponse);
+                }
                 if (reply != null)
                     reply.send(SUCCESSFUL_CODE);
 
@@ -66,8 +76,6 @@ public class RetrieveAvailableOccasionService extends IntentService {
                 Log.i(BuildConfig.LOG_TAG,
                         String.format("call api failed for locationId %d", locationId));
 
-                MAP.remove(locationId);
-
                 if (reply != null)
                     reply.send(FAILED_CODE);
             }
@@ -76,10 +84,14 @@ public class RetrieveAvailableOccasionService extends IntentService {
         }
     }
 
-    private void checkResponse(Context context, OccasionResponse occasionResponse) {
+    private void updateExamPlace(int locationId, OccasionResponse occasionResponse) {
         if (allowToProcess(occasionResponse))
-            return;
+            AppConfiguration.updateExamPlace(locationId,
+                    occasionResponse.getData().get(0).getOccasions().get(0).getLocationName(),
+                    occasionResponse.getData().get(0).getOccasions().get(0).getDuration().getStart());
+    }
 
+    private void checkResponse(Context context, OccasionResponse occasionResponse) {
         String city = occasionResponse.getData().get(0).getOccasions().get(0).getLocationName();
         LocalDateTime date = LocalDateTime.parse(
                 occasionResponse.getData().get(0).getOccasions().get(0).getDuration().getStart(),
@@ -96,14 +108,14 @@ public class RetrieveAvailableOccasionService extends IntentService {
     }
 
     private boolean allowToProcess(OccasionResponse occasionResponse) {
-        if (!(occasionResponse != null && 
-                occasionResponse.getData() != null && 
-                occasionResponse.getData().get(0) != null && 
+        if (occasionResponse != null &&
+                occasionResponse.getData() != null &&
+                occasionResponse.getData().get(0) != null &&
                 occasionResponse.getData().get(0).getOccasions() != null &&
-                occasionResponse.getData().get(0).getOccasions().get(0) != null)) {
-            Log.e(BuildConfig.LOG_TAG, "occasionResponse may be null");
+                occasionResponse.getData().get(0).getOccasions().get(0) != null) {
             return true;
         }
+        Log.e(BuildConfig.LOG_TAG, "occasionResponse may be null");
         return false;
     }
 

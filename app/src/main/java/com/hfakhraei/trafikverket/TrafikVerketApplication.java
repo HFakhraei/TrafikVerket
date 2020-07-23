@@ -5,13 +5,8 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.hfakhraei.trafikverket.service.AlarmPlayerService;
 
@@ -46,20 +41,16 @@ public class TrafikVerketApplication extends Application {
             return;
         }
 
-        configScheduler(BuildConfig.SCHEDULER_INTERVAL_05, M05SchedulerReceiver.class);
-        configScheduler(BuildConfig.SCHEDULER_INTERVAL_10, M10SchedulerReceiver.class);
-        configScheduler(BuildConfig.SCHEDULER_INTERVAL_30, M30SchedulerReceiver.class);
+        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent i = new Intent(this, SchedulerReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
+        assert am != null;
+        am.setRepeating(AlarmManager.RTC_WAKEUP,
+                SystemClock.elapsedRealtime() + BuildConfig.SCHEDULER_INTERVAL,
+                BuildConfig.SCHEDULER_INTERVAL, pi);
+
         //Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show();
         showNotification(getApplicationContext(), "Alarm Manager Configured " + BuildConfig.APP_MODE);
         Log.i(BuildConfig.LOG_TAG, "Alarm Manager Configured " + BuildConfig.APP_MODE);
     }
-
-    private void configScheduler(long millis, Class type) {
-        AlarmManager am = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent i = new Intent(this, type);
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, i, 0);
-        assert am != null;
-        am.setRepeating(AlarmManager.RTC_WAKEUP, SystemClock.elapsedRealtime() + millis, millis, pi);
-    }
-
 }

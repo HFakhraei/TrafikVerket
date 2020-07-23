@@ -1,11 +1,9 @@
 package com.hfakhraei.trafikverket;
 
 import android.Manifest;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,16 +15,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.hfakhraei.trafikverket.dto.occasionSearch.response.OccasionResponse;
+import com.hfakhraei.trafikverket.dto.ExamPlacesConfig;
 import com.hfakhraei.trafikverket.service.AlarmPlayerService;
-import com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.hfakhraei.trafikverket.service.NotificationService.showNotification;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.PENDING_RESULT_EXTRA;
-import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.REQUEST_EXTRA;
 
 public class MainActivity extends AppCompatActivity {
     private static final int WAKE_LOCK_PERMISSION_CODE = 100;
@@ -38,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private CustomAdapter adapter;
 
-    private List<OccasionResponse> occasionResponses = new ArrayList<>();
+    private List<ExamPlacesConfig> occasionResponses = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,15 +51,9 @@ public class MainActivity extends AppCompatActivity {
         listView.addHeaderView(header);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        refreshListView();
-    }
-
     private void refreshListView() {
         occasionResponses.clear();
-        List<OccasionResponse> latest = RetrieveAvailableOccasionService.getLatest();
+        List<ExamPlacesConfig> latest = AppConfiguration.getSelectedExamPlaces();
         occasionResponses.addAll(latest);
         adapter.notifyDataSetChanged();
     }
@@ -83,32 +70,10 @@ public class MainActivity extends AppCompatActivity {
         if (view.getId() != R.id.btnExecute) {
             return;
         }
-        occasionResponses.clear();
-        adapter.notifyDataSetChanged();
-        retrieveAvailableOccasion(1000140);//Stockholm
-        retrieveAvailableOccasion(1000134);//Sollentuna
-        retrieveAvailableOccasion(1000326);//Järfälla
-        retrieveAvailableOccasion(1000132);//Södertälje
-        retrieveAvailableOccasion(1000071);//Uppsala
-        retrieveAvailableOccasion(1000149);//Nyköping
-        retrieveAvailableOccasion(1000038);//Västerås
-        retrieveAvailableOccasion(1000005);//Eskilstuna
-        retrieveAvailableOccasion(1000072);//Köping
-        retrieveAvailableOccasion(1000329);//Norrköping
-        retrieveAvailableOccasion(1000009);//Linköping
-        retrieveAvailableOccasion(1000011);//Motala
-        retrieveAvailableOccasion(1000001);//Örebro
-    }
 
-    private void retrieveAvailableOccasion(int locationId) {
-        String message = String.format("Start foreground service for id %d", locationId);
-        Log.i(BuildConfig.LOG_TAG, message);
-        PendingIntent pendingResult = createPendingResult(
-                SERVICE_REQUEST_CODE, new Intent(), 0);
-        Intent intent = new Intent(getApplicationContext(), RetrieveAvailableOccasionService.class);
-        intent.putExtra(REQUEST_EXTRA, locationId);
-        intent.putExtra(PENDING_RESULT_EXTRA, pendingResult);
-        startService(intent);
+
+
+
     }
 
     public void btnRefreshOnClick(View view) {
