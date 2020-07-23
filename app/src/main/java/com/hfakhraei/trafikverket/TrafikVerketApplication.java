@@ -5,13 +5,8 @@ import android.app.Application;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
-
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import com.hfakhraei.trafikverket.service.AlarmPlayerService;
 
@@ -48,7 +43,7 @@ public class TrafikVerketApplication extends Application {
 
         configScheduler(BuildConfig.SCHEDULER_INTERVAL_05, M05SchedulerReceiver.class);
         configScheduler(BuildConfig.SCHEDULER_INTERVAL_10, M10SchedulerReceiver.class);
-        configScheduler(BuildConfig.SCHEDULER_INTERVAL_30, M30SchedulerReceiver.class);
+        configScheduler(BuildConfig.SCHEDULER_INTERVAL_15, M15SchedulerReceiver.class);
         //Toast.makeText(this, "Alarm is set", Toast.LENGTH_SHORT).show();
         showNotification(getApplicationContext(), "Alarm Manager Configured " + BuildConfig.APP_MODE);
         Log.i(BuildConfig.LOG_TAG, "Alarm Manager Configured " + BuildConfig.APP_MODE);

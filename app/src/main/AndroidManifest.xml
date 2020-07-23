@@ -24,7 +24,7 @@
         </activity>
 
         <receiver
-            android:name=".M30SchedulerReceiver"
+            android:name=".M15SchedulerReceiver"
             android:enabled="true"
             android:exported="true"/>
         <receiver

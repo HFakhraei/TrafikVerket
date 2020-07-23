@@ -18,9 +18,10 @@ public class M10SchedulerReceiver extends BroadcastReceiver {
         String message = String.format("Start M10 background tasks at %s", LocalDateTime.now().toString());
         Log.i(BuildConfig.LOG_TAG, message);
         retrieveAvailableOccasion(context);
-        retrieveAvailableOccasion(context, 1000134);//Sollentuna
+//        retrieveAvailableOccasion(context, 1000134);//Sollentuna
         retrieveAvailableOccasion(context, 1000326);//Järfälla
         retrieveAvailableOccasion(context, 1000132);//Södertälje
+        retrieveAvailableOccasion(context, 1000071);//Uppsala
         message = String.format("Stop background tasks at %s", LocalDateTime.now().toString());
         Log.i(BuildConfig.LOG_TAG, message);
     }

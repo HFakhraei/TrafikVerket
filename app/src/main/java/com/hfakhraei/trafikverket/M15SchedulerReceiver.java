@@ -13,13 +13,12 @@ import static androidx.core.content.ContextCompat.startForegroundService;
 import static com.hfakhraei.trafikverket.service.RetrieveAvailableOccasionService.REQUEST_EXTRA;
 
 
-public class M30SchedulerReceiver extends BroadcastReceiver {
+public class M15SchedulerReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String message = String.format("Start M30 background tasks at %s", LocalDateTime.now().toString());
         Log.i(BuildConfig.LOG_TAG, message);
         retrieveAvailableOccasion(context);
-        retrieveAvailableOccasion(context, 1000071);//Uppsala
         retrieveAvailableOccasion(context, 1000149);//Nyköping
         retrieveAvailableOccasion(context, 1000038);//Västerås
         retrieveAvailableOccasion(context, 1000005);//Eskilstuna
