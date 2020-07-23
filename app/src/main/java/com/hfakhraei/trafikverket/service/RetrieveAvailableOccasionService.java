@@ -77,6 +77,9 @@ public class RetrieveAvailableOccasionService extends IntentService {
     }
 
     private void checkResponse(Context context, OccasionResponse occasionResponse) {
+        if (allowToProcess(occasionResponse))
+            return;
+
         String city = occasionResponse.getData().get(0).getOccasions().get(0).getLocationName();
         LocalDateTime date = LocalDateTime.parse(
                 occasionResponse.getData().get(0).getOccasions().get(0).getDuration().getStart(),
@@ -90,6 +93,18 @@ public class RetrieveAvailableOccasionService extends IntentService {
             playAlarm();
             showNotification(context, city, date);
         }
+    }
+
+    private boolean allowToProcess(OccasionResponse occasionResponse) {
+        if (!(occasionResponse != null && 
+                occasionResponse.getData() != null && 
+                occasionResponse.getData().get(0) != null && 
+                occasionResponse.getData().get(0).getOccasions() != null &&
+                occasionResponse.getData().get(0).getOccasions().get(0) != null)) {
+            Log.e(BuildConfig.LOG_TAG, "occasionResponse may be null");
+            return true;
+        }
+        return false;
     }
 
     private void playAlarm() {
